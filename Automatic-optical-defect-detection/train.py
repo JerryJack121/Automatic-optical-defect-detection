@@ -12,6 +12,9 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import torch.nn as nn
 from torch.optim import lr_scheduler
 import torchvision
+import os
+# OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized.
+os.environ['KMP_DUPLICATE_LIB_OK']= 'True'
 
 train_on_gpu = torch.cuda.is_available()
 if not train_on_gpu:
@@ -28,7 +31,7 @@ num_workers = 0
 # 設計超參數
 learning_rate = 0.0001
 weight_decay = 0
-epochs = 2
+epochs = 1000
 batch_size = 16
 val_batch_size = 16
 
@@ -88,6 +91,7 @@ train_losses, val_losses = [], []
 
 loss_list = []
 val_loss_list = []
+val_acc_list = []
 # train
 for epoch in range(1, epochs):
     total_loss = 0.0
@@ -126,7 +130,7 @@ for epoch in range(1, epochs):
                 total_val_loss += running_val_loss.item()*inputs.size(0)
                 predict_y = torch.max(outputs, dim=1)[1]
                 total_val_acc += (predict_y == target).sum().item()
-                 pbar.update(1)
+                pbar.update(1)
                 pbar.set_description('valid')
                 pbar.set_postfix(
                 **{
@@ -138,8 +142,10 @@ for epoch in range(1, epochs):
     val_loss = total_val_loss/len(val_loader.dataset)
     loss_list.append(loss)
     val_loss_list.append(val_loss)
-    print('\nLoss: {:.6f} \tval_Loss: {:.6f} \tacc: {:.6f} '.format(loss, val_loss, val_acc))
-    torch.save(model.state_dict(), './logs/epoch%d-loss%.4f-val_loss%.4f.pth' %(epoch, loss, val_loss))
+    val_acc_list.append(val_acc)
+    print('
+    Loss: {:.6f} \tval_Loss: {:.6f} \tacc: {:.6f} '.format(loss, val_loss, val_acc))
+    torch.save(model.state_dict(), './logs/epoch%d-loss%.4f-val_loss%.4f-acc%.4f.pth' %(epoch, loss, val_loss, val_acc))
 
 # 繪製圖
 plt.figure()
@@ -148,5 +154,12 @@ plt.ylabel('Loss')
 plt.plot(loss_list, label='train_losses')
 plt.plot(val_loss_list, label='val_losses')
 plt.legend(loc='best')
-plt.savefig('/images/losses__StepLR_5.jpg')
+plt.savefig('./images/losses__StepLR_5.jpg')
+plt.show()
+plt.figure()
+plt.xlabel('Epochs')
+plt.ylabel('acc')
+plt.plot(val_acc_list, label='val_acc')
+plt.legend(loc='best')
+plt.savefig('./images/acc.jpg')
 plt.show()
