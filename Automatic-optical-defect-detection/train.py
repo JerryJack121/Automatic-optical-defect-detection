@@ -143,8 +143,7 @@ for epoch in range(1, epochs):
     loss_list.append(loss)
     val_loss_list.append(val_loss)
     val_acc_list.append(val_acc)
-    print('
-    Loss: {:.6f} \tval_Loss: {:.6f} \tacc: {:.6f} '.format(loss, val_loss, val_acc))
+    print('Loss: {:.6f} \tval_Loss: {:.6f} \tacc: {:.6f} '.format(loss, val_loss, val_acc))
     torch.save(model.state_dict(), './logs/epoch%d-loss%.7f-val_loss%.7f-acc%.4f.pth' %(epoch, loss, val_loss, val_acc))
 
 # 繪製圖
