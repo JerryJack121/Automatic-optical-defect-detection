@@ -47,9 +47,9 @@ input_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\tr
 # output_path
 out_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\\augment\train'
 # 擴增後每一類別的數量
-total_num = 1000
+total_num = 2000
 # 要使用的擴增方法
-aug_list = ['flip', 'gaussain_blur', 'rotate']    
+aug_list = ['flip', 'gaussain_blur']    
  # 類別
 class_id = '5' 
 

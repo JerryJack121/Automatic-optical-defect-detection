@@ -8,7 +8,7 @@ train_fold = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\tr
 # 生成驗證集路徑
 val_fold = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\val'   
 # 訓練集佔總資料集的比例
-training_rate = 0.7
+training_rate = 0.6
 
 
 #創建驗證資料夾

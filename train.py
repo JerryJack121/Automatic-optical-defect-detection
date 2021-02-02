@@ -13,6 +13,7 @@ import torch.nn as nn
 from torch.optim import lr_scheduler
 import torchvision
 import os
+
 # OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized.
 os.environ['KMP_DUPLICATE_LIB_OK']= 'True'
 
@@ -31,7 +32,7 @@ num_workers = 0
 # 設計超參數
 learning_rate = 0.0001
 weight_decay = 0
-epochs = 1000
+epochs = 2
 batch_size = 16
 val_batch_size = 16
 
