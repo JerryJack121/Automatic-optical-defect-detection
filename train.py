@@ -34,7 +34,6 @@ learning_rate = 0.0001
 weight_decay = 0
 epochs = 2
 batch_size = 16
-val_batch_size = 16
 
 # convert data to a normalized torch.FloatTensor
 train_transforms = transforms.Compose([transforms.Resize((256, 256)),
@@ -54,7 +53,7 @@ val_data = datasets.ImageFolder(Path(val_path), transform=val_transforms)
 train_loader = torch.utils.data.DataLoader(
     train_data, batch_size=batch_size, num_workers=num_workers, shuffle=True, drop_last=True)
 val_loader = torch.utils.data.DataLoader(
-    val_data, batch_size=val_batch_size,  num_workers=num_workers, shuffle=True)
+    val_data, batch_size=batch_size,  num_workers=num_workers, shuffle=True)
 
 # model = torch.load('resnet18.pt')
 model = torchvision.models.resnet101(pretrained=True, progress=True)
