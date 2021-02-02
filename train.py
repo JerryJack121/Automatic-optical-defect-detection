@@ -23,7 +23,7 @@ else:
     print('CUDA is available!  Training on GPU ...')
     device = torch.device("cuda")
 
-train_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\train'
+train_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\augment\train'
 val_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\val'
 
 # number of subprocesses to use for data loading
@@ -66,13 +66,13 @@ model.fc = nn.Linear(fc_features, 6)
 val_num = len(val_loader.dataset)
 
 # 遷移學習 -> frezee
-for name, parameter in model.named_parameters():
-    # print(name)
-    if name == 'layer4.0.conv1.weight':
-        break
-    # if name == 'fc.weight':
-    #     break
-    parameter.requires_grad = False
+# for name, parameter in model.named_parameters():
+#     # print(name)
+#     if name == 'layer4.0.conv1.weight':
+#         break
+#     # if name == 'fc.weight':
+#     #     break
+#     parameter.requires_grad = False
 
 model.to(device)
 
@@ -93,7 +93,7 @@ loss_list = []
 val_loss_list = []
 val_acc_list = []
 # train
-for epoch in range(1, epochs):
+for epoch in range(1, epochs+1):
     total_loss = 0.0
     total_val_loss = 0.0
     print('\nrunning epoch: {}'.format(epoch))

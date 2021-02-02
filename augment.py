@@ -2,7 +2,7 @@ import os
 from cv2 import cv2
 from PIL import Image
 import numpy as np
-# import argparse
+import shutil
 import random
 
 def rotate(image, angle, center=None, scale=1.0):
@@ -45,40 +45,55 @@ def flip(img) :
 # input_path
 input_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\train'  # 輸入資料夾
 # output_path
-out_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\train_aug'
+out_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\\augment\train'
 # 擴增後每一類別的數量
 total_num = 1000
-aug_list = ['flip', 'guss']
-fold = '0'
-fold_path = os.path.join(input_path, fold)
-img_list = os.listdir(fold_path)
-if len(img_list) < total_num:    # 判斷資料是否需要擴增
-    idxs = np.random.randint(0, len(img_list), size= total_num - len(img_list)) # 隨機挑選被擴增
-    for idx in  idxs:
-        img_name = img_list[idx]
-        img = cv2.imread(os.path.join(fold_path, img_name))
-        aug = random.choice(aug_list)
-        if  aug == 'flip':   # 翻轉
-            img_flip, flip_factor = flip(img)
-            cv2.imshow('org', img)
-            cv2.imshow('flip', img_flip)
-            cv2.waitKey(0)
-        elif aug == 'guss': # 高斯濾波
-            img_guss = gaussain_blur(img)
-            cv2.imshow('org', img)
-            cv2.imshow('blur', img_guss)
-            cv2.waitKey(0)
-        elif aug == 'avg': # 均值濾波
-            img_blur = avg_blur(img)
-            cv2.imshow('org', img)
-            cv2.imshow('blur', img_blur)
-            cv2.waitKey(0)
-        elif aug == 'rotate': # 旋轉
-            img_blur = avg_blur(img)
-            img_rotate = rotate(img , degree)
-            cv2.imshow(img_name, img_rotate)
-            cv2.waitKey(0)
+# 要使用的擴增方法
+aug_list = ['flip', 'gaussain_blur', 'rotate']    
+ # 類別
+class_id = '5' 
 
+# 建立資料夾
+if not os.path.isdir(os.path.join(out_path, class_id)):
+        os.mkdir(os.path.join(out_path, class_id))
+
+fold_path = os.path.join(input_path, class_id)
+img_list = os.listdir(fold_path)
+
+# 複製原始圖片
+for img in img_list:
+    shutil.copy(os.path.join(fold_path, img), os.path.join(out_path, class_id, img))
+
+if len(img_list) < total_num:    # 判斷資料是否需要擴增
+    idxs = np.random.randint(0, len(img_list), size= total_num - len(img_list)) # 隨機挑選被擴增的樣本
+for idx in  idxs:
+    img_name = img_list[idx]
+    img = cv2.imread(os.path.join(fold_path, img_name))
+    aug = random.choice(aug_list)
+    # 翻轉
+    if  aug == 'flip':  
+        img_aug, _ = flip(img)
+    # 高斯濾波    
+    elif aug == 'gaussain_blur': 
+        img_aug = gaussain_blur(img)
+    # 均值濾波
+    elif aug == 'avg': 
+        img_aug = avg_blur(img)
+    # 旋轉
+    elif aug == 'rotate': 
+        # 隨機選轉角度
+        degree = np.random.randint(-90, 90)
+        img_aug = rotate(img , degree)
+
+    img_name = '{}_{}.jpg'.format(img_name.split('.')[0], aug)    
+    img_out = os.path.join(out_path, class_id,img_name)
+    # 若檔案已經存在，重新命名
+    i = 1
+    while os.path.isfile(img_out):
+        img_rename = '{}({}).jpg'.format(img_name.split('.')[0], str(i))
+        img_out = os.path.join(out_path, class_id,img_rename)
+        i += 1
+    cv2.imwrite(img_out, img_aug)
        
 
         
