@@ -25,16 +25,16 @@ else:
     print('CUDA is available!  Training on GPU ...')
     device = torch.device("cuda")
 
-train_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\augment\train'
-val_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\val'
+train_path = r'D:\Jack\dataset\automatic-optical-defect-detection\generate_dataset\augment\train'
+val_path = r'D:\Jack\dataset\automatic-optical-defect-detection\generate_dataset\val'
 
 # number of subprocesses to use for data loading
 num_workers = 0
 # 設計超參數
-learning_rate = 0.0001
+learning_rate = 0.00001
 weight_decay = 0
-epochs = 2
-batch_size = 16
+epochs = 200
+batch_size = 45
 
 # convert data to a normalized torch.FloatTensor
 train_transforms = transforms.Compose([transforms.Resize((256, 256)),
@@ -67,16 +67,16 @@ model.fc = nn.Linear(fc_features, 6)
 val_num = len(val_loader.dataset)
 
 # 遷移學習 -> frezee
-# for name, parameter in model.named_parameters():
-#     # print(name)
-#     if name == 'layer4.0.conv1.weight':
-#         break
-#     # if name == 'fc.weight':
-#     #     break
-#     parameter.requires_grad = False
+for name, parameter in model.named_parameters():
+    # print(name)
+    # if name == 'layer4.0.conv1.weight':
+    #     break
+    if name == 'fc.weight':
+        break
+    parameter.requires_grad = False
 
 # 載入預訓練權重
-model.load_state_dict(torch.load('./weights/0202/epoch9-loss0.0058640-val_loss0.0170710-acc0.9970.pth'))
+model.load_state_dict(torch.load('./weights/0203/epoch85-loss0.0000041-val_loss0.0145818-acc0.9985.pth'))
 model.to(device)
 
 # 定義損失函數
@@ -89,12 +89,18 @@ optimizer = torch.optim.Adam(params=model.parameters(),
                              weight_decay=weight_decay)
 
 # 學習率下降
-scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.9)
+# scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.9)
+scheduler = lr_scheduler.CosineAnnealingLR(optimizer,
+                                           T_max=20,
+                                           eta_min=1e-7,
+                                           last_epoch=-1)
+
 train_losses, val_losses = [], []
 
 loss_list = []
 val_loss_list = []
 val_acc_list = []
+lrs = []
 # train
 for epoch in range(1, epochs+1):
     total_loss = 0.0
@@ -111,6 +117,7 @@ for epoch in range(1, epochs+1):
             total_loss += running_loss.item()*inputs.size(0)
             running_loss.backward()
             optimizer.step()
+            lrs.append(optimizer.state_dict()['param_groups'][0]['lr'])
             pbar.update(1)
             pbar.set_description('train')
             pbar.set_postfix(
@@ -164,4 +171,11 @@ plt.ylabel('acc')
 plt.plot(val_acc_list, label='val_acc')
 plt.legend(loc='best')
 plt.savefig('./images/acc.jpg')
+plt.show()
+plt.figure()
+plt.xlabel('Epochs')
+plt.ylabel('lr')
+plt.plot(lrs, label='lr')
+plt.legend(loc='best')
+plt.savefig('./images/lr.jpg')
 plt.show()
