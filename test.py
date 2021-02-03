@@ -40,20 +40,14 @@ for index, row in df.iterrows():
 test_data = TestDataset(img_list, transform=test_transforms)
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=64)
    
-temp = []                                     
+results = []                                     
 model.eval()         
 with torch.no_grad():                                 
     for data in tqdm(test_loader):
         data = data.to(device)
         pred = model(data)
         predict_y = torch.max(pred, dim=1)[1]
-        temp.append(np.array(predict_y.cpu().detach()))
-
-results  = []  
-for i in range(len(temp)):
-    for j in temp[i]:
-        results.append(j)
-results = np.array(results)
+        results = np.hstack((results, np.array(predict_y.cpu().detach())))
 
 df['Label'] = results
 
