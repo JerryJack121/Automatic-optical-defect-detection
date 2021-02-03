@@ -2,17 +2,17 @@ from torch.utils.data.dataset import Dataset
 from PIL import Image
 
 class TestDataset(Dataset):
-    def __init__(self, img_list, transform, device):
-        self.data = []
-        for img_name in img_list:
-            img = Image.open(img_name).convert('RGB')
-            img = transform(img)
-            self.data.append(img)
+    def __init__(self, img_list, transform):
+        super(TestDataset, self).__init__()
+        self.img_list = img_list
+        self.transform = transform
 
     def __len__(self):
-        return len(self.data)
+        return len(self.img_list)
 
     def __getitem__(self, index):
-        return self.data[index]
+        img = Image.open(self.img_list[index]).convert('RGB')
+        trans_img = self.transform(img)
+        return trans_img
         
     

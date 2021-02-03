@@ -37,7 +37,7 @@ for index, row in df.iterrows():
     img = os.path.join(PATH_test, row['ID'])
     img_list.append(img)
 
-test_data = TestDataset(img_list, transform=test_transforms, device=device)
+test_data = TestDataset(img_list, transform=test_transforms)
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=10)
    
 temp = []                                     
