@@ -14,6 +14,7 @@ from torch.optim import lr_scheduler
 import torchvision
 import os
 
+
 # OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized.
 os.environ['KMP_DUPLICATE_LIB_OK']= 'True'
 
@@ -59,7 +60,7 @@ val_loader = torch.utils.data.DataLoader(
 model = torchvision.models.resnet101(pretrained=True, progress=True)
 # 提取參數fc的輸入參數
 fc_features = model.fc.in_features
-# 將最後輸出類別改為20
+# 將最後輸出類別改為6
 model.fc = nn.Linear(fc_features, 6)
 
 # 驗證資料數
