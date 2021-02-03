@@ -74,6 +74,8 @@ val_num = len(val_loader.dataset)
 #     #     break
 #     parameter.requires_grad = False
 
+# 載入預訓練權重
+model.load_state_dict(torch.load('./weights/0202/epoch9-loss0.0058640-val_loss0.0170710-acc0.9970.pth'))
 model.to(device)
 
 # 定義損失函數
