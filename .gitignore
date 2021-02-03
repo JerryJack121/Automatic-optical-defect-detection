@@ -1,2 +1,3 @@
-*.pth
+logs
 images
+weights
