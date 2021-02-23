@@ -24,7 +24,7 @@ model = torchvision.models.resnet101(pretrained=False, progress=True)
 fc_features = model.fc.in_features
 model.fc = nn.Linear(fc_features, 6)
 model.to(device)
-model.load_state_dict(torch.load('./weights/0203/epoch84-loss0.0000020-val_loss0.0153702-acc0.9985.pth'))    # 權重
+model.load_state_dict(torch.load('./weights/rotate/epoch34-loss0.0000077-val_loss0.0179573-acc0.9970.pth'))    # 權重
 
 test_transforms = transforms.Compose([transforms.Resize((256, 256)),
                                        transforms.ToTensor(),

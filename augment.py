@@ -49,7 +49,7 @@ out_path = r'D:\dataset\automatic-optical-defect-detection\generate_dataset\\aug
 # 擴增後每一類別的數量
 total_num = 2000
 # 要使用的擴增方法
-aug_list = ['flip', 'gaussain_blur']    
+aug_list = ['flip', 'gaussain_blur', 'rotate']    
  # 類別
 class_id = '5' 
 
